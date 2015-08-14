@@ -1,13 +1,15 @@
+library(stringr)
 corr <- function(directory, threshold = 0) {
-	id <- 1:10
+	id <- 1:332
+	totalcors<-numeric()
     for(i in seq_along(id)){
         data<-read.csv(paste(directory,"/",str_pad(id[i],3,pad="0"),".csv",sep=""))
-        gooddata<-data[complete.cases(data),]
-        validdata<-gooddata[gooddata[["sulfate"]] > threshold & gooddata[["nitrate"]]>threshold,]
-        if(dim(validdata)[1]!=0){
-        	print(validdata)
-        } else{
-        	print("No good data for threshold")
+        good<-complete.cases(data)
+        gooddata<-data[good,]
+        if(sum(good)>threshold){
+        	cr<-cor(gooddata[["sulfate"]],gooddata[["nitrate"]])
+        	totalcors<-c(totalcors,cr)
         }
     }
+    totalcors
 }
